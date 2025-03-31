@@ -19,9 +19,13 @@ export default function CryptoTracker() {
   const [selectedCrypto, setSelectedCrypto] = useState<Crypto | null>(null);
   const [currency, setCurrency] = useState("usd");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setError(null); // Reset error before making a new request
+    setError(null);
+    setCryptos([]);
+    setLoading(true);
+
     fetch(GET_COINGECKO_API_URL(currency))
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch cryptocurrency data");
@@ -29,12 +33,13 @@ export default function CryptoTracker() {
       })
       .then((data) => {
         setCryptos(data);
-        setError(null); // Clear error if successful
+        setError(null);
       })
       .catch((err) => {
-        console.error("Error fetching crypto data:", err);
-        setError("Failed to load cryptocurrency data. Please try again.");
-      });
+        console.error("Error fetching crypto data:", err?.message);
+        setError(err?.message || "Failed to load cryptocurrency data. Please try again.");
+      })
+      .finally(() => setLoading(false));
   }, [currency]);
 
   const filteredCryptos = cryptos.filter((crypto) =>
@@ -43,7 +48,6 @@ export default function CryptoTracker() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Crypto Tracker</h1>
      
      {/* Error Message */}
      {error && (
@@ -73,6 +77,9 @@ export default function CryptoTracker() {
           </option>
         ))}
       </select>
+
+      {/* Loader */}
+      {loading && <p className="text-center text-gray-600">Loading...</p>}
 
       {/* Crypto List */}
       <ul className="border p-2 rounded-md bg-gray-50">
