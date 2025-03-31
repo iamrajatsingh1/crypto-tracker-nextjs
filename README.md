@@ -1,6 +1,6 @@
-# Turborepo non-monorepo starter
+# crypto-tracker-nextjs Turborepo
 
-This is an official starter Turborepo.
+This is a Crypto tracker app powered by Turborepo.
 
 ## Using this example
 
